@@ -82,8 +82,8 @@ export const JOBS = [
     walls: outerWalls().concat([
       { x: 520, y: PLAY_TOP, w: 10, h: 140 },
       { x: 750, y: PLAY_TOP, w: 10, h: 140 },
-      { x: 520, y: 196, w: 100, h: 10 },
-      { x: 660, y: 196, w: 100, h: 10 },
+      { x: 520, y: 196, w: 80, h: 10 },
+      { x: 680, y: 196, w: 80, h: 10 },
     ]),
     cover: [
       { x: 200, y: 150, w: 220, h: 36, label: 'teller counter' },
@@ -95,7 +95,7 @@ export const JOBS = [
     ],
     doors: [
       exitDoor(),
-      { x: 620, y: 196, w: 40, h: 10, locked: true, exit: false, label: 'vault door' },
+      { x: 600, y: 196, w: 80, h: 10, locked: true, exit: false, label: 'vault door' },
     ],
     guards: [
       {
@@ -112,8 +112,8 @@ export const JOBS = [
         waypoints: [
           { x: 560, y: 250 },
           { x: 720, y: 250 },
-          { x: 720, y: 430 },
-          { x: 560, y: 430 },
+          { x: 720, y: 400 },
+          { x: 560, y: 400 },
         ],
       },
       {

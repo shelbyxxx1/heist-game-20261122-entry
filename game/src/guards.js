@@ -9,7 +9,7 @@ import {
   GUARD_SPEED,
   THIEF_RADIUS,
 } from './config.js';
-import { angleTo, angleDiff, distance, moveCircle } from './physics.js';
+import { angleTo, angleDiff, distance, moveCircle, circleHitsAny } from './physics.js';
 import { canSee } from './vision.js';
 
 export function createGuard(def, jobIndex, rng) {
@@ -38,9 +38,36 @@ function walkToward(g, tx, ty, dt, solids) {
   const dist = Math.sqrt(dx * dx + dy * dy);
   if (dist < 2) return true;
   const step = Math.min(dist, g.speed * dt);
-  g.facing = angleTo(g.x, g.y, tx, ty);
-  moveCircle(g, (dx / dist) * step, (dy / dist) * step, 12, solids);
-  return dist - step < 2;
+  const base = angleTo(g.x, g.y, tx, ty);
+  // Direct step first; if furniture blocks it, sidestep around it instead
+  // of pressing against the obstacle forever. A step that only slides
+  // sideways along the obstacle still counts: it rounds the corner.
+  const offsets = [0, Math.PI / 4, -Math.PI / 4, Math.PI / 2, -Math.PI / 2, (3 * Math.PI) / 4, (-3 * Math.PI) / 4, Math.PI];
+  for (const off of offsets) {
+    const a = base + off;
+    const nx = g.x + Math.cos(a) * step;
+    const ny = g.y + Math.sin(a) * step;
+    if (circleHitsAny(nx, ny, 12, solids)) continue;
+    const nd = Math.sqrt((tx - nx) * (tx - nx) + (ty - ny) * (ty - ny));
+    if (nd >= dist) continue;
+    g.x = nx;
+    g.y = ny;
+    g.facing = a;
+    return nd < 2;
+  }
+  for (const off of [Math.PI / 2, -Math.PI / 2]) {
+    const a = base + off;
+    const nx = g.x + Math.cos(a) * step;
+    const ny = g.y + Math.sin(a) * step;
+    if (circleHitsAny(nx, ny, 12, solids)) continue;
+    const nd = Math.sqrt((tx - nx) * (tx - nx) + (ty - ny) * (ty - ny));
+    if (nd > dist + 4) continue;
+    g.x = nx;
+    g.y = ny;
+    g.facing = a;
+    return false;
+  }
+  return false;
 }
 
 function investigate(g, x, y) {
