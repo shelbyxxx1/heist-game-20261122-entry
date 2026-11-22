@@ -1,7 +1,8 @@
 // The HUD: a top bar with the job name, the big labelled ALARM meter, the
 // loot total and the tool charges, plus the objective line and a transient
 // message toast. Everything is drawn on the canvas so screenshots show it.
-import { CANVAS_WIDTH, HUD_HEIGHT, COLORS, ALARM_MAX, TOOL_ORDER, TOOL_NAMES } from './config.js';
+import { CANVAS_WIDTH, HUD_HEIGHT, COLORS, ALARM_MAX } from './config.js';
+import { TOOL_ORDER, TOOL_NAMES } from './tools.js';
 
 function alarmColor(alarm) {
   if (alarm >= 70) return COLORS.alarmHigh;
@@ -21,9 +22,9 @@ export function drawHud(ctx, state) {
   ctx.textAlign = 'left';
   ctx.fillText(state.job.name, 14, 24);
 
-  // Alarm meter.
-  const barX = 330;
-  const barW = 380;
+  // Alarm meter, clear of the tools row on the bar's bottom-left.
+  const barX = 470;
+  const barW = 330;
   ctx.fillStyle = COLORS.hudDim;
   ctx.font = 'bold 12px ui-monospace, monospace';
   ctx.fillText('ALARM', barX, 14);
